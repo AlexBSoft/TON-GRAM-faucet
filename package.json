@@ -1,0 +1,19 @@
+{
+  "name": "ton_faucet",
+  "version": "1.0.0",
+  "description": "Faucet for Telegram Open Network",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "nodemon"
+  },
+  "author": "AlexB",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "ejs": "^3.0.2",
+    "express": "^4.17.1",
+    "hcaptcha": "0.0.1",
+    "tonweb": "0.0.9"
+  }
+}

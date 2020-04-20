@@ -1,0 +1,133 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Faucet explorer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="icon" type="image/png" href="ton-logo.png">
+
+    <meta name="description" content="TON test GRAM faucet.">
+
+    <!--Captcha-->
+    <%if (captcha.secretkey) { %>
+    <script src="https://hcaptcha.com/1/api.js" async defer></script>
+    <% } %>
+    <style>
+html,
+body {
+  height: 100%;
+}
+
+body {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: center;
+  align-items: center;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  background-color: #f5f5f5;
+}
+.faucet {
+  width: 100%;
+  max-width: 1020px;
+  
+  margin: auto;
+  display: block;
+}
+.fca{
+  padding: 15px;
+}
+.faucet .form-control {
+  position: relative;
+  box-sizing: border-box;
+  height: auto;
+  padding: 10px;
+  font-size: 16px;
+}
+.faucet .form-control:focus {
+  z-index: 2;
+}
+.faucet input {
+  margin-bottom: 10px;
+}
+.list-group-item:first-child {
+     border-top-left-radius: 0; 
+     border-top-right-radius: 0; 
+}
+.list-group-item:last-child {
+     border-bottom-left-radius: 0; 
+     border-bottom-right-radius: 0; 
+}
+.list-group-item {
+     border-left: 0px;
+     border-right: 0px;
+}
+    </style>
+
+  </head>
+  <body class="text-center" data-gr-c-s-loaded="true">
+    <div class="faucet">
+      <div class="card">
+        <div id="alert">
+          
+        </div>
+        <div class="fca">
+          <h1 class="h3 font-weight-normal">Faucet status</h1>
+          <h2 class="h5 font-weight-normal">Balance: <span id="balance">...</span> GRAM</h2>
+          <p class="text-muted">
+            Latest payments
+          </p>
+        </div>
+          <ul class="list-group" id="transactions">
+          </ul>
+        
+        
+      </div>
+      <p class="text-muted small"><i>You can donate test GRAMs to <%= address %></i><br>
+        TON Gram faucet, developed by AlexB <br></p>
+    </div>
+
+
+  <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+  <script src="tonweb.js"></script>
+
+  <script>
+    const tonweb = new TonWeb();
+
+    async function fetch_wallet(){
+      var wallet = tonweb.wallet.create({address: "<%= address %>"});
+
+      const address = await wallet.getAddress();
+
+      let history = await tonweb.getTransactions(address, 20);
+      console.log(history);
+      $.each(history, function( key, value ) {
+        if(value['out_msgs'][0])
+        $( "#transactions" ).append( '<li class="list-group-item"><code>'+ng_to_g(value['out_msgs'][0]['value'])+'</code> GRAM to <code>'
+          +value['out_msgs'][0]['destination']+'</code><br>'+timeConverter(value['utime'])+'</li>' );
+        
+      });
+      let balance = await tonweb.getBalance(address);
+      $("#balance").html(Math.round(balance / 10000000)/100);
+
+   }
+
+   fetch_wallet();
+
+   function ng_to_g(nanogram){
+    return Math.round(nanogram / 10000000)/100;
+   }
+   function timeConverter(UNIX_timestamp){
+    var a = new Date(UNIX_timestamp * 1000);
+    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var year = a.getFullYear();
+    var month = months[a.getMonth()];
+    var date = a.getDate();
+    var hour = a.getHours();
+    var min = a.getMinutes();
+    var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min;
+    return time;
+  }
+  </script>
+  </body>
+</html>
